@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 
 // MongoDB Connection and Server Start
 mongoose
-  .connect(process.env.DATABASE_URL!, {
+  .connect(process.env.DATABASE_URL, {
     // options can be added if needed
   })
   .then(() => {

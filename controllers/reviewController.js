@@ -1,9 +1,7 @@
-import { Request, Response } from "express";
 import Review from "../models/Review.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 // Add a new review for a product
-export const addReview = async (req: authMiddleware, res: Response) => {
+export const addReview = async (req, res) => {
   try {
     const { product, rating, comment } = req.body;
 
@@ -13,7 +11,7 @@ export const addReview = async (req: authMiddleware, res: Response) => {
 
     const existingReview = await Review.findOne({
       product,
-      user: req.user!.userId,
+      user: req.user.userId,
     });
     if (existingReview) {
       return res
@@ -25,7 +23,7 @@ export const addReview = async (req: authMiddleware, res: Response) => {
       product,
       rating,
       comment,
-      user: req.user!.userId,
+      user: req.user.userId,
     });
 
     await review.save();
@@ -36,7 +34,7 @@ export const addReview = async (req: authMiddleware, res: Response) => {
 };
 
 // Get all reviews for a specific product
-export const getReviewsByProduct = async (req: Request, res: Response) => {
+export const getReviewsByProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
 
@@ -51,14 +49,14 @@ export const getReviewsByProduct = async (req: Request, res: Response) => {
 };
 
 // Update a user's review by review id
-export const updateReview = async (req: authMiddleware, res: Response) => {
+export const updateReview = async (req, res) => {
   try {
     const reviewId = req.params.id;
     const { rating, comment } = req.body;
 
     const review = await Review.findById(reviewId);
     if (!review) return res.status(404).json({ error: "Review not found" });
-    if (review.user.toString() !== req.user!.userId)
+    if (review.user.toString() !== req.user.userId)
       return res
         .status(403)
         .json({ error: "Unauthorized to update this review" });
@@ -74,13 +72,13 @@ export const updateReview = async (req: authMiddleware, res: Response) => {
 };
 
 // Delete a user's review
-export const deleteReview = async (req: authMiddleware, res: Response) => {
+export const deleteReview = async (req, res) => {
   try {
     const reviewId = req.params.id;
 
     const review = await Review.findById(reviewId);
     if (!review) return res.status(404).json({ error: "Review not found" });
-    if (review.user.toString() !== req.user!.userId)
+    if (review.user.toString() !== req.user.userId)
       return res
         .status(403)
         .json({ error: "Unauthorized to delete this review" });

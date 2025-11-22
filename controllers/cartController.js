@@ -1,11 +1,9 @@
-import { Request, Response } from "express";
 import Cart from "../models/Cart.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js"; // extended req with user
 
 // Get cart for logged-in user
-export const getCart = async (req: authMiddleware, res: Response) => {
+export const getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user!.userId }).populate(
+    const cart = await Cart.findOne({ user: req.user.userId }).populate(
       "items.product"
     );
     if (!cart) return res.status(200).json({ items: [] });
@@ -16,14 +14,14 @@ export const getCart = async (req: authMiddleware, res: Response) => {
 };
 
 // Add an item to cart or increase quantity if exists
-export const addItemToCart = async (req: authMiddleware, res: Response) => {
+export const addItemToCart = async (req, res) => {
   try {
     const { product, quantity = 1, size, color } = req.body;
     if (!product) return res.status(400).json({ error: "Product ID required" });
 
-    let cart = await Cart.findOne({ user: req.user!.userId });
+    let cart = await Cart.findOne({ user: req.user.userId });
     if (!cart) {
-      cart = new Cart({ user: req.user!.userId, items: [] });
+      cart = new Cart({ user: req.user.userId, items: [] });
     }
 
     // Check if item with same product & attributes exists
@@ -48,12 +46,12 @@ export const addItemToCart = async (req: authMiddleware, res: Response) => {
 };
 
 // Update cart item quantity or attributes
-export const updateCartItem = async (req: authMiddleware, res: Response) => {
+export const updateCartItem = async (req, res) => {
   try {
     const itemId = req.params.itemId;
     const { quantity, size, color } = req.body;
 
-    const cart = await Cart.findOne({ user: req.user!.userId });
+    const cart = await Cart.findOne({ user: req.user.userId });
     if (!cart) return res.status(404).json({ error: "Cart not found" });
 
     const item = cart.items.id(itemId);
@@ -71,11 +69,11 @@ export const updateCartItem = async (req: authMiddleware, res: Response) => {
 };
 
 // Remove an item from cart
-export const removeCartItem = async (req: authMiddleware, res: Response) => {
+export const removeCartItem = async (req, res) => {
   try {
     const itemId = req.params.itemId;
 
-    const cart = await Cart.findOne({ user: req.user!.userId });
+    const cart = await Cart.findOne({ user: req.user.userId });
     if (!cart) return res.status(404).json({ error: "Cart not found" });
 
     cart.items.id(itemId)?.remove();
@@ -88,9 +86,9 @@ export const removeCartItem = async (req: authMiddleware, res: Response) => {
 };
 
 // Clear all items in cart
-export const clearCart = async (req: authMiddleware, res: Response) => {
+export const clearCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user!.userId });
+    const cart = await Cart.findOne({ user: req.user.userId });
     if (!cart) return res.status(404).json({ error: "Cart not found" });
 
     cart.items = [];

@@ -1,17 +1,7 @@
-//@ts-ignore
-import { Request, Response } from "express";
 import Product from "../models/Product.js";
 import { uploadToS3 } from "../utils/s3Client.js";
 
-interface MulterFile extends Express.Multer.File {}
-interface ProductRequest extends Request {
-  files: {
-    images?: MulterFile[];
-    video?: MulterFile[];
-  };
-}
-
-export const createProduct = async (req: ProductRequest, res: Response) => {
+export const createProduct = async (req, res) => {
   try {
     const { name, description, price, category, sizes, colors, stock } =
       req.body;
@@ -62,7 +52,7 @@ export const createProduct = async (req: ProductRequest, res: Response) => {
   }
 };
 
-export const editProduct = async (req: ProductRequest, res: Response) => {
+export const editProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const existingProduct = await Product.findById(productId);
@@ -134,7 +124,7 @@ export const editProduct = async (req: ProductRequest, res: Response) => {
   }
 };
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const product = await Product.findById(productId).populate("category");
@@ -147,7 +137,7 @@ export const getProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().populate("category");
     res.status(200).json(products);

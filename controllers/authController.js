@@ -1,16 +1,14 @@
-//@ts-ignore
-import { Request, Response } from "express";
 import User from "../models/User.js";
 import client from "../utils/s3Client.js";
 import jwt from "jsonwebtoken";
 
-const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID!;
+const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
 const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret";
 
 /**
  * Send OTP via WhatsApp using Twilio Verify API
  */
-export const sendOtp = async (req: Request, res: Response) => {
+export const sendOtp = async (req, res) => {
   const { phoneNumber } = req.body;
 
   if (!phoneNumber)
@@ -31,7 +29,7 @@ export const sendOtp = async (req: Request, res: Response) => {
 /**
  * Verify OTP code and register/login user, returning JWT token
  */
-export const verifyOtp = async (req: Request, res: Response) => {
+export const verifyOtp = async (req, res) => {
   const { phoneNumber, code, name, email } = req.body;
 
   if (!phoneNumber || !code) {

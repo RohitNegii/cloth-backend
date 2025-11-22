@@ -1,24 +1,6 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-interface IOrderItem {
-  product: mongoose.Types.ObjectId;
-  quantity: number;
-  price: number;
-  size?: string;
-  color?: string;
-}
-
-export interface IOrder extends Document {
-  user: mongoose.Types.ObjectId;
-  items: IOrderItem[];
-  totalPrice: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  shippingAddress: string;
-  orderedAt: Date;
-  updatedAt: Date;
-}
-
-const OrderSchema = new Schema<IOrder>(
+const OrderSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     items: [
@@ -45,4 +27,4 @@ const OrderSchema = new Schema<IOrder>(
   { timestamps: { createdAt: "orderedAt", updatedAt: "updatedAt" } }
 );
 
-export default mongoose.model<IOrder>("Order", OrderSchema);
+export default mongoose.model("Order", OrderSchema);
