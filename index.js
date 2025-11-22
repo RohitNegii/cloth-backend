@@ -30,9 +30,7 @@ app.get("/", (req, res) => {
 
 // MongoDB Connection and Server Start
 mongoose
-  .connect(process.env.DATABASE_URL, {
-    // options can be added if needed
-  })
+  .connect(process.env.DATABASE_URL) // no options needed here for recent versions
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () => {
@@ -41,4 +39,5 @@ mongoose
   })
   .catch((error) => {
     console.error("MongoDB connection error:", error);
+    process.exit(1);
   });

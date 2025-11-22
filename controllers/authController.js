@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import client from "../utils/s3Client.js";
+import { uploadToS3 } from "../utils/s3Client.js";
 import jwt from "jsonwebtoken";
 
 const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
@@ -15,7 +15,7 @@ export const sendOtp = async (req, res) => {
     return res.status(400).json({ error: "Phone number is required" });
 
   try {
-    await client.verify.services(verifyServiceSid).verifications.create({
+    await uploadToS3.verify.services(verifyServiceSid).verifications.create({
       to: `whatsapp:${phoneNumber}`,
       channel: "whatsapp",
     });
@@ -39,7 +39,7 @@ export const verifyOtp = async (req, res) => {
   }
 
   try {
-    const verificationCheck = await client.verify
+    const verificationCheck = await uploadToS3.verify
       .services(verifyServiceSid)
       .verificationChecks.create({ to: `whatsapp:${phoneNumber}`, code });
 
