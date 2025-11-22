@@ -23,6 +23,9 @@ const OrderSchema = new Schema(
       default: "pending",
     },
     shippingAddress: { type: String, required: true },
+    shipmentId: { type: String },
+    trackingId: { type: String },
+    trackingUrl: { type: String },
   },
   { timestamps: { createdAt: "orderedAt", updatedAt: "updatedAt" } }
 );

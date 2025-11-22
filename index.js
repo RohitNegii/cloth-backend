@@ -7,6 +7,8 @@ import authRoutes from "./routes/auth.js"
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import reviewRoutes from "./routes/review.js";
+import categoryRoutes from "./routes/category.js";
+import orderRoutes from "./routes/order.js";
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Health check route
 app.get("/", (req, res) => {
@@ -30,7 +34,7 @@ app.get("/", (req, res) => {
 
 // MongoDB Connection and Server Start
 mongoose
-  .connect(process.env.DATABASE_URL) // no options needed here for recent versions
+  .connect(process.env.DATABASE_URL)
   .then(() => {
     console.log("MongoDB connected");
     app.listen(PORT, () => {
@@ -39,5 +43,4 @@ mongoose
   })
   .catch((error) => {
     console.error("MongoDB connection error:", error);
-    process.exit(1);
   });

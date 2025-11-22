@@ -1,11 +1,15 @@
-import User from "../models/User.js";
+import User from '../models/User.js';
 
 export const adminMiddleware = async (req, res, next) => {
-  if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    const user = await User.findById(req.user.id);
 
-  const user = await User.findById(req.user.userId);
-  if (!user || !user.isAdmin) {
-    return res.status(403).json({ error: "Forbidden, admin only" });
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying admin role', error });
   }
-  next();
 };
