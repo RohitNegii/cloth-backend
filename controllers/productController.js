@@ -1,17 +1,7 @@
-//@ts-ignore
-import { Request, Response } from "express";
 import Product from "../models/Product.js";
 import { uploadToS3 } from "../utils/s3Client.js";
 
-interface MulterFile extends Express.Multer.File {}
-interface ProductRequest extends Request {
-  files: {
-    images?: MulterFile[];
-    video?: MulterFile[];
-  };
-}
-
-export const createProduct = async (req: ProductRequest, res: Response) => {
+export const createProduct = async (req, res) => {
   try {
     const { name, description, price, category, sizes, colors, stock } =
       req.body;
@@ -62,7 +52,7 @@ export const createProduct = async (req: ProductRequest, res: Response) => {
   }
 };
 
-export const editProduct = async (req: ProductRequest, res: Response) => {
+export const editProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const existingProduct = await Product.findById(productId);
@@ -134,20 +124,46 @@ export const editProduct = async (req: ProductRequest, res: Response) => {
   }
 };
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getProduct = async (req, res) => {
+    const id = req.params.id;
+  if (!id) {
+    return res.status(400).json({ error: "Product ID is required" });
+  }
+
   try {
-    const productId = req.params.id;
-    const product = await Product.findById(productId).populate("category");
+    const product = await Product.findById(id)
+      .populate("category", "name") 
+      .exec(); 
+
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to get product", details: error });
-  }
-};
+    const productData = {
+      _id: product._id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      images: product.images,
+      sizes: product.sizes,
+      colors: product.colors,
+      rating: product.averageRating,
+      reviews: product.reviewCount,
+      category: product.category ? product.category.name : "N/A",
+      stock: product.stock,
+      videoUrl: product.videoUrl || "",
+    };
 
-export const getAllProducts = async (req: Request, res: Response) => {
+    res.status(200).json(productData);
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ 
+        error: "Failed to retrieve product.", 
+        details: error.message 
+    });
+  }
+}
+
+export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().populate("category");
     res.status(200).json(products);
